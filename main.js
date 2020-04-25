@@ -1,30 +1,22 @@
-const {app, BrowserWindow} = require('electron')
-const url = require('url')
-const path = require('path')
-const glob = require('glob')
+"use strict"
 
-let win
-function createWindow() {
-    loadMainScripts()
+const { app, ipcRenderer } = require('electron')
+const Window = require('./modules/Window')
 
-    win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            nodeIntegration: true
-        }
+const evts = require('./process_main/events')
+
+function main() {
+    let mainWindow = new Window({
+        file: 'render/index.html'
     })
 
-    win.loadURL(url.format ({ 
-        pathname: path.join(__dirname, 'index.html'), 
-        protocol: 'file:',
-        slashes: true 
-     })) 
+    mainWindow.on('show', () => {
+        evts.initialize(mainWindow)
+    })
 }
 
-function loadMainScripts() {
-    const files = glob.sync(path.join(__dirname, 'process-main/**.js'))
-    files.forEach((file) => { require(file) })
-}
+app.on('ready', main)
+app.on('window-all-closed', () => {
+    app.quit()
+})
 
-app.on('ready', createWindow)

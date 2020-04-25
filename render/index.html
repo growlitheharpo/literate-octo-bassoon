@@ -3,6 +3,7 @@
    <head>
       <meta charset = "UTF-8">
       <title>Hello World!</title>
+      <style>body{ font: caption; }</style>
    </head>
 
    <body>
@@ -10,6 +11,15 @@
       We are using node <script>document.write(process.versions.node)</script>,
       Chrome <script>document.write(process.versions.chrome)</script>,
       and Electron <script>document.write(process.versions.electron)</script>.
+
+      <div class="container">
+         <h1>Todos</h1>
+         <button id="create-todo-btn" type="button">Create a New To-Do</button>
+         <ul id="todo-list"></ul>
+      </div>
    </body>
 
+   <script type="text/javascript">
+      require('../process_render/index.js')
+   </script>
 </html>
