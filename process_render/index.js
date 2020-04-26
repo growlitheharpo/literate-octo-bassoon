@@ -19,8 +19,26 @@ document.getElementById('open-folder-btn').addEventListener('click', () => {
 ipcRenderer.on('add-folder-images', (event, imageList) => {
     const listElement = document.getElementById('album-cover-list')
     if (listElement) {
-        
+        const listItems = imageList.reduce((html, txt) => {
+            html += `<img src=${txt} />`
+            return html
+        }, '')
+
+        listElement.innerHTML = listItems
     }
+
+    /*
+    const todoList = document.getElementById('todo-list')
+    const todoItems = todos.reduce((html, todo) => {
+        html += `<li class="todo-item">${todo}</li>`
+        return html
+    }, '')
+
+    todoList.innerHTML = todoItems
+    todoList.querySelectorAll('.todo-item').forEach(item => {
+        item.addEventListener('click', deleteTodo)
+    })
+    */
 })
 
 let sound;
