@@ -27,21 +27,19 @@ ipcMain.on('play-song', (event) => {
     })
 })
 
-function getFiles(dir) {
-    return fs.readdir(dir)
-    .then((subdirs) => {
-        return Promise.all(subdirs.map((subdir) => {
-            const res = path.resolve(dir, subdir)
-            return fs.stat(res).then((statRes) => {
-                return statRes.isDirectory() ? getFiles(res) : Promise.resolve(res)
-            })
-        }))
-    }).then((files) => {
-        return Promise.resolve(files.reduce((a, f) => a.concat(f), []))
-    })
+async function getFiles(dir) {
+    let subdirs = await fs.readdir(dir)
+    let files = await Promise.all(subdirs.map(async (subdir) => {
+        const res = path.resolve(dir, subdir)
+        const s = await fs.stat(res)
+        return s.isDirectory() ? await getFiles(res) : res
+    }))
+    return files.reduce((a, f) => a.concat(f), [])
 }
 
 ipcMain.on('open-folder', (event) => {
+    event.sender.send('clear-albums')
+
     dialog.showOpenDialog({
         properties: ['openDirectory']
     })
@@ -54,46 +52,36 @@ ipcMain.on('open-folder', (event) => {
         }
     })
     .then((files) => {
-        return Promise.all(files.map((filePath) => {
+        return files.map((filePath) => {
             return new Promise((resolve, reject) => {
                 new jsmediatags.Reader(filePath)
                     .read({
-                        onSuccess: (tag) => {
-                            resolve(tag)
+                        onSuccess: (res) => {
+                            if (res.hasOwnProperty('tags') && res.tags.hasOwnProperty('picture')) {
+                                var imgData = res.tags.picture
+
+                                var buffer = new Buffer(imgData.data)
+                                var str = buffer.toString('base64')
+
+                                const shasum = crypto.createHash('md5')
+                                shasum.update(str)
+                                const hash = shasum.digest('hex')
+                                if (!parsedImgs.hasOwnProperty(hash)) {
+                                    parsedImgs[hash] = `data:${imgData.format};base64,${str}`;
+                                }
+
+                                event.sender.send('add-folder-images', [ parsedImgs[hash] ])
+                            }
+                            resolve()
                         },
                         onError: (error) => {
-                            resolve({})
+                            reject(error)
                         }
                     })
             })
-        }))
+        })
     })
-    .then((tags) => {
-        let imgs = tags
-        .filter((obj) => {
-            return obj.hasOwnProperty('tags') && obj.tags.hasOwnProperty('picture')
-        })
-        .map((obj) => {
-            var imgData = obj.tags.picture
-
-            var buffer = new Buffer(imgData.data)
-            var str = buffer.toString('base64')
-
-            const shasum = crypto.createHash('md5')
-            shasum.update(str)
-            const hash = shasum.digest('hex')
-            if (parsedImgs.hasOwnProperty(hash)) {
-                return parsedImgs[hash]
-            }
-
-            parsedImgs[hash] = `data:${imgData.format};base64,${str}`;
-            return parsedImgs[hash]
-        })
-
-        function distinct (val, index, self) {
-            return self.indexOf(val) == index
-        }
-        imgs = imgs.filter(distinct)
-        event.sender.send('add-folder-images', imgs)
-    });
+    .then((promises) => {
+        return Promise.all(promises)
+    })
 })

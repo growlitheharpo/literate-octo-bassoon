@@ -16,13 +16,20 @@ document.getElementById('open-folder-btn').addEventListener('click', () => {
     ipcRenderer.send('open-folder')
 })
 
+ipcRenderer.on('clear-albums', () => {
+    const listElement = document.getElementById('album-cover-list')
+    if (listElement) {
+        listElement.innerHTML = ''
+    }
+})
+
 ipcRenderer.on('add-folder-images', (event, imageList) => {
     const listElement = document.getElementById('album-cover-list')
     if (listElement) {
         const listItems = imageList.reduce((html, txt) => {
             html += `<img src=${txt} />`
             return html
-        }, '')
+        }, listElement.innerHTML)
 
         listElement.innerHTML = listItems
     }
