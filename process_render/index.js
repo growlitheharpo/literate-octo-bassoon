@@ -12,6 +12,17 @@ document.getElementById('volume-slider').oninput = function() {
     Howler.volume(v / 100.0)
 }
 
+document.getElementById('open-folder-btn').addEventListener('click', () => {
+    ipcRenderer.send('open-folder')
+})
+
+ipcRenderer.on('add-folder-images', (event, imageList) => {
+    const listElement = document.getElementById('album-cover-list')
+    if (listElement) {
+        
+    }
+})
+
 let sound;
 let soundTick;
 
