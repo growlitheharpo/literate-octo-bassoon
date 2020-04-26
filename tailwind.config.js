@@ -4,10 +4,10 @@ module.exports = {
   separator: ':',
   theme: {
     screens: {
-      sm: '550px',
-      md: '768px',
-      lg: '1024px',
-      xl: '1280px',
+      sm: '1900px',
+      md: '1920px',
+      lg: '2560px',
+      xl: '3840px',
       print: {'raw':'print'},
     },
     extend: {
@@ -30,28 +30,6 @@ module.exports = {
       fontSize: {
         prlg: '1.4rem'
       },
-    },
-    fontFamily: {
-      sans: [ '"Roboto Condensed"', '"Trebuchet MS"', 'Arial', 'Helvetica', 'sans-serif'],
-      serif: [
-        '"Crimson Text"',
-        'Georgia',
-        'Cambria',
-        '"Times New Roman"',
-        'Times',
-        'serif',
-      ],
-      mono: [
-        'Menlo',
-        'Monaco',
-        'Consolas',
-        '"Liberation Mono"',
-        '"Courier New"',
-        'monospace',
-      ],
-      head: [ '"Roboto Condensed"', '"Trebuchet MS"', 'Arial', 'Helvetica', 'sans-serif'],
-      headlite: [ '"Roboto"', '"Trebuchet MS"', 'Arial', 'Helvetica', 'sans-serif' ],
-      body: [ '"Crimson Text"']
     },
     height: theme => ({
       auto: 'auto',

@@ -1,7 +1,7 @@
 'use strict'
 
 const path = require('path')
-const { ipcMain, TopLevelWindow } = require('electron')
+const { ipcMain, TopLevelWindow, dialog } = require('electron')
 
 const Window = require('../modules/Window')
 const DataStore = require('../modules/DataStore')
@@ -48,4 +48,15 @@ ipcMain.on('add-todo', (event, todo) => {
 ipcMain.on('delete-todo', (event, todo) => {
     const updatedTodos = todosData.deleteTodo(todo).todos
     mainWin.send('todos', updatedTodos)
+})
+
+let sound
+ipcMain.on('play-song', (event) => {
+    dialog.showOpenDialog({
+        properties: ['openFile']
+    }).then((filename) => {
+        if (filename && filename.filePaths) {
+            event.sender.send('use-sound-file', filename.filePaths[0] || "")
+       }
+    })
 })

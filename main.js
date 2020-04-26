@@ -23,7 +23,7 @@ function prepareCSS() {
     }
 }
 
-const evts = require('./process_main/events')
+const events = require('./process_main/events')
 
 function main() {
     prepareCSS()
@@ -33,7 +33,7 @@ function main() {
     })
 
     mainWindow.on('show', () => {
-        evts.initialize(mainWindow)
+        events.initialize(mainWindow)
     })
 }
 

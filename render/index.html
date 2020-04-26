@@ -7,15 +7,28 @@
    </head>
 
    <body>
-      <h1>Hello World!</h1>
-      We are using node <script>document.write(process.versions.node)</script>,
-      Chrome <script>document.write(process.versions.chrome)</script>,
-      and Electron <script>document.write(process.versions.electron)</script>.
+      <div class="container mx-auto p-8">
+         <h1>Hello World!</h1>
+         <p>
+            We are using node <script>document.write(process.versions.node)</script>,
+            Chrome <script>document.write(process.versions.chrome)</script>,
+            and Electron <script>document.write(process.versions.electron)</script>.
+         </p>
 
-      <div class="mx-4">
-         <h1>Todos</h1>
-         <button id="create-todo-btn" type="button">Create a New To-Do</button>
-         <ul id="todo-list"></ul>
+         <button class="bg-green-400" id="play-sound-btn">Click Me</button>
+         <div class="mx-4 mx-auto">
+            <input type="range" min="0" max="100" value="75" class="slider" id="volume-slider">
+         </div>
+
+         <div class="mx-4" class="bg-gray-600">
+            <div id="sound-progress" class="bg-blue-300 h-4"></div>
+         </div>
+
+         <div>
+            <h1>Todos</h1>
+            <button id="create-todo-btn" type="button">Create a New To-Do</button>
+            <ul id="todo-list"></ul>
+         </div>
       </div>
    </body>
 
