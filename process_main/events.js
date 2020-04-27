@@ -6,8 +6,11 @@ const fs = require('fs').promises
 const jsmediatags = require('jsmediatags')
 const crypto = require('crypto')
 
+const Library = require('../modules/Library')
+
 let mainWin;
 let parsedImgs = new Object()
+let library = new Library()
 
 exports.initialize = function (win) {
     mainWin = win;
@@ -46,11 +49,13 @@ ipcMain.on('open-folder', (event) => {
     .then((result) => {
         if (result && result.filePaths && result.filePaths.length > 0) {
             let dir = result.filePaths[0]
-            return getFiles(dir)
+            return library.initialize(dir)
+            // return getFiles(dir)
         } else {
             return Promise.resolve([])
         }
     })
+    /*
     .then((files) => {
         return files.map((filePath) => {
             return new Promise((resolve, reject) => {
@@ -84,4 +89,5 @@ ipcMain.on('open-folder', (event) => {
     .then((promises) => {
         return Promise.all(promises)
     })
+    */
 })
