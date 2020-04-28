@@ -1,9 +1,9 @@
 'use strict'
 
 const Song = require('./Song')
+const Album = require('./Album')
 const { getFiles, parseTag } = require("./Utils")
-
-class Album {}
+const db = require('./Database')
 
 class Library {
     // root: string
@@ -12,6 +12,9 @@ class Library {
 
     constructor() {
         this.root = ""
+        db.songs.find().then((vals) => {
+            this.songs = vals
+        })
     }
 
     getSongs() {
@@ -24,17 +27,27 @@ class Library {
             return
         }
 
-        const newSong = new Song()
+        let newSong = new Song()
         newSong.loadFromTag(t, filePath)
 
         let songs = this.getSongs()
-        const dups = songs.filter((song) => {
-            return (newSong.isDuplicate(song))
-        })
-        if (!dups || dups.length === 0) {
-            songs.push(newSong)
+        if (((songs.filter((song) => newSong.isDuplicate(song))) || []).length > 0) {
+            return
         }
-        this.songs = songs
+
+        const albums = await db.albums.find({ title: newSong.album })
+        let album;
+        if ((albums || []).length === 0) {
+            album = new Album()
+            album.loadFromTag(t)
+            album = await db.albums.insert(album)
+        } else {
+            album = albums[0]
+        }
+
+        newSong.albumId = album._id
+        newSong = await db.songs.insert(newSong)
+        songs.push(newSong)
     }
 
     async initialize(root) {
@@ -43,10 +56,7 @@ class Library {
         await getFiles(this.root)
         .then((allFiles) => {
             return allFiles.map((filePath) => {
-                const dups = this.getSongs().filter((song) => {
-                    return song.file === filePath
-                })
-                if (dups && dups.length > 0) {
+                if ((this.getSongs().filter((song) => song.file === filePath) || []).length > 0) {
                     return Promise.resolve()
                 }
 
