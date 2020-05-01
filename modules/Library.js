@@ -85,16 +85,12 @@ class Library {
         this.root = root
 
         let allFiles = await getFiles(this.root)
-        allFiles.map(async (filePath) => {
+        await allFiles.reduce(async (p, filePath) => {
+            await p;
             let tagObj = await parseTag(filePath)
-            await this.loadSingleSong(tagObj, filePath)
-        })
+            return this.loadSingleSong(tagObj, filePath)
+        }, Promise.resolve())
     }
-
-    /*
-    public getAlbumArt(albumName) {
-    }
-    */
 }
 
 module.exports = Library
