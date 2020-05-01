@@ -49,7 +49,7 @@ ipcMain.on('open-folder', (event) => {
     .then((result) => {
         if (result && result.filePaths && result.filePaths.length > 0) {
             let dir = result.filePaths[0]
-            return library.initialize(dir)
+            return library.addFolder(dir)
             // return getFiles(dir)
         } else {
             return Promise.resolve([])

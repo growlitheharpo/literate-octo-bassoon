@@ -32,6 +32,9 @@ Album.init({
     year: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    artwork: {
+        type: DataTypes.BLOB,
     }
 }, { sequelize })
 
