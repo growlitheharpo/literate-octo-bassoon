@@ -1,9 +1,7 @@
 'use strict'
 
-const Song = require('./Song')
-const Album = require('./Album')
 const { getFiles, parseTag } = require("./Utils")
-const { sequelize } = require('./Database')
+const { sequelize, Song, Album, Artist } = require('./Database')
 
 class Library {
     constructor() {
@@ -26,8 +24,38 @@ class Library {
             return
         }
 
-        await sequelize.sync()
+        // TODO: Check for necessary tags!
 
+        try {
+            let [artist, artistCreated] = await Artist.findOrCreate({ 
+                where: { name: t.artist } 
+            })
+            let [album, albumCreated] = await Album.findOrCreate( { 
+                where: { title: t.album, artistId: artist.id }, 
+                defaults: {
+                    title: t.album,
+                    year: t.year,
+                    ArtistId: artist.id
+                }
+            })
+            let [song, songCreated] = await Song.findOrCreate( { 
+                where: { file: filePath }, 
+                defaults: {
+                    AlbumId: album.id,
+                    title: t.title,
+                    track: t.track,
+                    file: filePath
+            }})
+
+            if (song == undefined) {
+                throw "bad error";
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        
+
+        /*
         const newSong = new Song()
         newSong.loadFromTag(t, filePath)
 
@@ -56,20 +84,10 @@ class Library {
     async initialize(root) {
         this.root = root
 
-        await getFiles(this.root)
-        .then((allFiles) => {
-            return allFiles.map((filePath) => {
-                if ((this.getSongs().filter((song) => song.file === filePath) || []).length > 0) {
-                    return Promise.resolve()
-                }
-
-                return parseTag(filePath).then((tagObj) => {
-                    return this.loadSingleSong(tagObj, filePath)
-                })
-            })
-        })
-        .then((promises) =>{
-            Promise.all(promises)
+        let allFiles = await getFiles(this.root)
+        allFiles.map(async (filePath) => {
+            let tagObj = await parseTag(filePath)
+            await this.loadSingleSong(tagObj, filePath)
         })
     }
 

@@ -1,5 +1,6 @@
 "use strict"
 
+const { sequelize } = require('./modules/Database')
 const { app, ipcRenderer } = require('electron')
 const Window = require('./modules/Window')
 
@@ -25,8 +26,9 @@ function prepareCSS() {
 
 const events = require('./process_main/events')
 
-function main() {
+async function main() {
     prepareCSS()
+    await sequelize.sync()
 
     let mainWindow = new Window({
         file: 'render/index.html'
