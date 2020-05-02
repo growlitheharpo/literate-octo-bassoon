@@ -6,7 +6,9 @@ const fs = require('fs').promises
 const jsmediatags = require('jsmediatags')
 const crypto = require('crypto')
 
+const { Op } = require('sequelize')
 const Library = require('../modules/Library')
+const { Album, Artist, sequelize } = require('../modules/Database')
 
 let mainWin;
 let parsedImgs = new Object()
@@ -30,6 +32,45 @@ ipcMain.on('play-song', (event) => {
     })
 })
 
+async function sendAllArtwork(event) {
+    const limit = 2;
+    let offset = 0
+    while (true) {
+        let albums = await Album.findAll( {
+            where: {
+                artwork: { [Op.not]: null}
+            },
+            include: [{
+                model: sequelize.models.Artist,
+                as: 'Artist',
+                required: false
+            }],
+            order: [
+                [ Album.associations.Artist, 'name', 'ASC'],
+                ['year', 'ASC']
+            ],
+            offset,
+            limit
+        });
+
+        offset += limit
+
+        const imgs = albums.map((album) => {
+            const str = album.artwork.toString('base64')
+            return `data:${album.artworkFmt};base64,${str}`;
+        })
+        event.sender.send('add-folder-images', imgs)
+
+        if (albums.length < limit) {
+            break
+        }
+    }
+}
+
+ipcMain.on('index-ready', async (event) => {
+    await sendAllArtwork(event)
+})
+
 async function getFiles(dir) {
     let subdirs = await fs.readdir(dir)
     let files = await Promise.all(subdirs.map(async (subdir) => {
@@ -41,8 +82,6 @@ async function getFiles(dir) {
 }
 
 ipcMain.on('open-folder', (event) => {
-    event.sender.send('clear-albums')
-
     dialog.showOpenDialog({
         properties: ['openDirectory']
     })
@@ -50,44 +89,12 @@ ipcMain.on('open-folder', (event) => {
         if (result && result.filePaths && result.filePaths.length > 0) {
             let dir = result.filePaths[0]
             return library.addFolder(dir)
-            // return getFiles(dir)
         } else {
             return Promise.resolve([])
         }
     })
-    /*
-    .then((files) => {
-        return files.map((filePath) => {
-            return new Promise((resolve, reject) => {
-                new jsmediatags.Reader(filePath)
-                    .read({
-                        onSuccess: (res) => {
-                            if (res.hasOwnProperty('tags') && res.tags.hasOwnProperty('picture')) {
-                                var imgData = res.tags.picture
-
-                                var buffer = new Buffer(imgData.data)
-                                var str = buffer.toString('base64')
-
-                                const shasum = crypto.createHash('md5')
-                                shasum.update(str)
-                                const hash = shasum.digest('hex')
-                                if (!parsedImgs.hasOwnProperty(hash)) {
-                                    parsedImgs[hash] = `data:${imgData.format};base64,${str}`;
-                                }
-
-                                event.sender.send('add-folder-images', [ parsedImgs[hash] ])
-                            }
-                            resolve()
-                        },
-                        onError: (error) => {
-                            reject(error)
-                        }
-                    })
-            })
-        })
+    .then(() => {
+        event.sender.send('clear-albums')
+        return sendAllArtwork(event)
     })
-    .then((promises) => {
-        return Promise.all(promises)
-    })
-    */
 })

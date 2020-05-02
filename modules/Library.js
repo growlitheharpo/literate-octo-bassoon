@@ -43,7 +43,7 @@ class Library {
                 var imgData = t.picture;
                 if (imgData != null) {
                     var buffer = new Buffer(imgData.data)
-                    await album.update({ artwork: buffer })
+                    await album.update({ artwork: buffer, artworkFmt: imgData.format })
                 }
             }
 

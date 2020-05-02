@@ -54,6 +54,9 @@ module.exports = {
       ...theme('height'),
     }),
     maxWidth: {
+      '5xs': '5rem',
+      '10xs': '10rem',
+      '15xs': '15rem',
       xs: '20rem',
       sm: '24rem',
       md: '28rem',

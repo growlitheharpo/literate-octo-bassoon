@@ -35,6 +35,9 @@ Album.init({
     },
     artwork: {
         type: DataTypes.BLOB,
+    },
+    artworkFmt: {
+        type:DataTypes.STRING(64)
     }
 }, { sequelize })
 

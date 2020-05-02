@@ -24,28 +24,17 @@ ipcRenderer.on('clear-albums', () => {
 })
 
 ipcRenderer.on('add-folder-images', (event, imageList) => {
+    const imgStyle = "m-1 max-w-10xs md:max-w-15xs object-cover"
+
     const listElement = document.getElementById('album-cover-list')
     if (listElement) {
         const listItems = imageList.reduce((html, txt) => {
-            html += `<img src=${txt} />`
+            html += `<img class="${imgStyle}" src=${txt} />`
             return html
         }, listElement.innerHTML)
 
         listElement.innerHTML = listItems
     }
-
-    /*
-    const todoList = document.getElementById('todo-list')
-    const todoItems = todos.reduce((html, todo) => {
-        html += `<li class="todo-item">${todo}</li>`
-        return html
-    }, '')
-
-    todoList.innerHTML = todoItems
-    todoList.querySelectorAll('.todo-item').forEach(item => {
-        item.addEventListener('click', deleteTodo)
-    })
-    */
 })
 
 let sound;
@@ -76,3 +65,5 @@ ipcRenderer.on('use-sound-file', (event, filepath) => {
 
     sound.play()
 })
+
+ipcRenderer.send('index-ready')
