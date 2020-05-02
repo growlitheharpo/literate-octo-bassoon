@@ -37,3 +37,10 @@ exports.parseTag = async function(filename) {
         return {}
     }
 }
+
+exports.findTemplate = function(links, templateName) {
+    return Array.prototype.reduce.call(links, (r, link) => {
+        if (r != null) { return r}
+        return link.import.querySelector(templateName)
+    }, null)
+}

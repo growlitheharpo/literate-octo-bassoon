@@ -4,6 +4,8 @@
       <meta charset = "UTF-8">
       <title>Hello World!</title>
       <link href="../assets/css/built.css" rel="stylesheet">
+      <link rel="import" href="./albums.html">
+      <link rel="import" href="./player.html">
    </head>
 
    <body>
@@ -15,17 +17,8 @@
             and Electron <script>document.write(process.versions.electron)</script>.
          </p>
 
-         <button class="bg-green-400" id="play-sound-btn">Click Me</button>
-         <div class="mx-4 mx-auto">
-            <input type="range" min="0" max="100" value="75" class="slider" id="volume-slider">
-         </div>
+         <button class="bg-green-400 mb-4" id="open-folder-btn">Import Folder</button>
 
-         <div class="mx-4" class="bg-gray-600">
-            <div id="sound-progress" class="bg-blue-300 h-4"></div>
-         </div>
-         <button class="bg-green-400" id="open-folder-btn">Click Me</button>
-         <ul id="album-cover-list" class="flex flex-wrap items-stretch">
-         </ul>
       </div>
    </body>
 

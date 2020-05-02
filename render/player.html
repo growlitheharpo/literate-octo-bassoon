@@ -1,0 +1,15 @@
+<template class="player-template">
+    <div>
+        <button class="bg-green-400" id="play-sound-btn">Play File</button>
+        <div class="mx-4 mx-auto">
+           <input type="range" min="0" max="100" value="75" class="slider" id="volume-slider">
+        </div>
+
+        <div class="mx-4" class="bg-gray-600">
+           <div id="sound-progress" class="bg-blue-300 h-4"></div>
+        </div>
+    </div>
+    <script>
+        require('../process_render/player.js')
+    </script>
+</template>
