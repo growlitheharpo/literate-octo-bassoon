@@ -39,6 +39,7 @@ module.exports = {
       sm: '10rem',
       md: '12rem',
       lg: '14rem',
+      ['15lg']: '15rem',
       xl: '16rem',
       '2xl': '20rem',
       '3xl': '24rem',

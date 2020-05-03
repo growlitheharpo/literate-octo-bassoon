@@ -2,24 +2,22 @@
 <html>
    <head>
       <meta charset = "UTF-8">
-      <title>Hello World!</title>
       <link href="../assets/css/built.css" rel="stylesheet">
       <link rel="import" href="./albums.html">
       <link rel="import" href="./player.html">
+      <link rel="import" href="./loader.html">
+      <script src="https://kit.fontawesome.com/2ffb0e9231.js" crossorigin="anonymous"></script>
    </head>
 
-   <body>
-      <div class="container mx-auto p-8">
-         <h1>Hello World!</h1>
-         <p>
-            We are using node <script>document.write(process.versions.node)</script>,
-            Chrome <script>document.write(process.versions.chrome)</script>,
-            and Electron <script>document.write(process.versions.electron)</script>.
-         </p>
-
-         <button class="bg-green-400 mb-4" id="open-folder-btn">Import Folder</button>
-
+   <body class="bg-gray-800">
+      <div class="loader-container">
+         <!-- Loader gets inserted here -->
       </div>
+      <div id="primary-container" class="container mx-auto p-8 hidden">
+         <button class="bg-green-400 mb-4" id="open-folder-btn">Import Folder</button>
+         <!-- Album list gets inserted here -->
+      </div>
+      <!-- Player gets inserted here -->
    </body>
 
    <script type="text/javascript">

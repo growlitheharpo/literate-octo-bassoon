@@ -1,12 +1,25 @@
 <template class="player-template">
-    <div>
-        <button class="bg-green-400" id="play-sound-btn">Play File</button>
-        <div class="mx-4 mx-auto">
-           <input type="range" min="0" max="100" value="75" class="slider" id="volume-slider">
+    <div class="sticky bottom-0 bg-gray-600 ">
+        <div class="flex flex-row items-center justify-around">
+            <button class="bg-green-400" id="play-sound-btn">Play File</button>
+            <div class="p-2">
+                <i class="fa-lg px-8 fas fa-step-backward"></i>
+                <div class="inline-block">
+                    <i class="fa-2x fas fa-play"></i>
+                </div>
+                <div class="hidden">
+                    <i class="fa-2x fas fa-pause "></i>
+                </div>
+                <i class="fa-lg px-8 fas fa-step-forward"></i>
+            </div>
+            <div>
+               <input type="range" min="0" max="100" value="75" class="slider" id="volume-slider">
+            </div>
         </div>
-
-        <div class="mx-4" class="bg-gray-600">
-           <div id="sound-progress" class="bg-blue-300 h-4"></div>
+        <div class="p-2 max-w-5xl mx-auto">
+            <div class="bg-black rounded-md">
+               <div id="sound-progress" class="bg-white h-2 rounded-md"></div>
+            </div>
         </div>
     </div>
     <script>

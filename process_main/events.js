@@ -32,8 +32,8 @@ ipcMain.on('play-song', (event) => {
     })
 })
 
-async function sendAllArtwork(event) {
-    const limit = 2;
+async function sendAllAlbums(event) {
+    const limit = 10;
     let offset = 0
     while (true) {
         let albums = await Album.findAll( {
@@ -43,7 +43,7 @@ async function sendAllArtwork(event) {
             include: [{
                 model: sequelize.models.Artist,
                 as: 'Artist',
-                required: false
+                required: true
             }],
             order: [
                 [ Album.associations.Artist, 'name', 'ASC'],
@@ -55,11 +55,17 @@ async function sendAllArtwork(event) {
 
         offset += limit
 
-        const imgs = albums.map((album) => {
-            const str = album.artwork.toString('base64')
-            return `data:${album.artworkFmt};base64,${str}`;
+        const data = albums.map((album) => {
+            const artwork = album.artwork != null ? album.artwork.toString('base64') : ""
+            return {
+                artwork,
+                artworkFmt: album.artworkFmt,
+                artist: album.Artist.name,
+                title: album.title,
+                year: album.year.toString()
+            }
         })
-        event.sender.send('add-folder-images', imgs)
+        event.sender.send('append-to-album-list', data)
 
         if (albums.length < limit) {
             break
@@ -68,7 +74,8 @@ async function sendAllArtwork(event) {
 }
 
 ipcMain.on('index-ready', async (event) => {
-    await sendAllArtwork(event)
+    await sendAllAlbums(event)
+    event.sender.send('finish-loading')
 })
 
 async function getFiles(dir) {
@@ -88,13 +95,25 @@ ipcMain.on('open-folder', (event) => {
     .then((result) => {
         if (result && result.filePaths && result.filePaths.length > 0) {
             let dir = result.filePaths[0]
-            return library.addFolder(dir)
+            event.sender.send('begin-loading')
+            return library.addFolder(dir, (file, index, count) => {
+                let progress = index / count
+                event.sender.send('set-loading-text', {
+                    header: "Parsing...",
+                    info: `Loading file ${index} of ${count}`,
+                    secondary: file,
+                    progress
+                })
+            })
         } else {
             return Promise.resolve([])
         }
     })
     .then(() => {
         event.sender.send('clear-albums')
-        return sendAllArtwork(event)
+        return sendAllAlbums(event)
+    })
+    .then(() => {
+        event.sender.send('finish-loading')
     })
 })

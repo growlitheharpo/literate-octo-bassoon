@@ -6,19 +6,20 @@ const { findTemplate } = require('../modules/Utils')
 
 const links = document.querySelectorAll('link[rel="import"]')
 
-function addTemplate(templateName) {
+function addTemplate(templateName, parentSelector) {
     const template = findTemplate(links, templateName)
     if (template == null) {
         console.error("Could not find template " + templateName)
         return null
     } else {
         const clone = document.importNode(template.content, true)
-        return document.querySelector('.container').appendChild(clone)
+        return document.querySelector(parentSelector).appendChild(clone)
     }
 }
 
-const player = addTemplate(".player-template")
-const albums = addTemplate(".albums-template")
+const loader = addTemplate(".loader-template", ".loader-container")
+const player = addTemplate(".player-template", "body")
+const albums = addTemplate(".albums-template", ".container")
 
 document.getElementById('open-folder-btn').addEventListener('click', () => {
     ipcRenderer.send('open-folder')

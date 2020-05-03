@@ -55,12 +55,18 @@ class Library {
         }
     }
 
-    async addFolder(root) {
+    async addFolder(root, updateCb) {
         this.root = root
 
         let allFiles = await getFiles(this.root)
-        await allFiles.reduce(async (p, filePath) => {
+        await allFiles.reduce(async (p, filePath, idx) => {
             await p;
+
+            updateCb(filePath, idx, allFiles.length)
+
+            if (filePath.endsWith("jpg")) {
+                return Promise.resolve()
+            }
 
             // Look for it first - parsing the tag is a waste if it already exists
             let song = await Song.findOne({ where: { file: filePath } })

@@ -1,0 +1,17 @@
+<template class="loader-template">
+    <div id="loader-screen" class="w-auto h-screen bg-gray-900 flex flex-col content-center justify-center">
+        <div class="self-center text-center">
+            <div class="mx-auto loader"></div>
+            <h1 id="loader-screen-header" class="text-white">Initializing...</h1>
+            <div class="bg-gray-600 rounded-lg">
+                <div id="loader-screen-progress" class="h-1 bg-white rounded-lg"></div>
+            </div>
+            <p id="loader-screen-info" class="text-white"></p>
+        </div>
+        <p id="loader-screen-info-secondary"
+            class="self-center flex-none flex-grow-0 h-1 max-w-5xl text-left text-white mt-8"></p>
+    </div>
+    <script>
+        require('../process_render/loader.js')
+    </script>
+</template>
