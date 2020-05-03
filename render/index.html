@@ -9,11 +9,12 @@
       <script src="https://kit.fontawesome.com/2ffb0e9231.js" crossorigin="anonymous"></script>
    </head>
 
-   <body class="bg-gray-800">
+   <body class="bg-gray-800 overflow-hidden relative">
+      <div class="sticky top-0 h-8 bg-gray-600" style="-webkit-app-region: drag"></div>
       <div class="loader-container">
          <!-- Loader gets inserted here -->
       </div>
-      <div id="primary-container" class="container mx-auto p-8 hidden">
+      <div id="primary-container" class="container mx-auto p-8 hidden overflow-y-scroll" style="height: calc(100vh - 2rem - 64px);">
          <button class="bg-green-400 mb-4" id="open-folder-btn">Import Folder</button>
          <!-- Album list gets inserted here -->
       </div>

@@ -8,6 +8,7 @@ const defaultProps = {
     webPreferences: {
         nodeIntegration: true
     },
+    frame: false,
     show: false
 }
 
